@@ -40,7 +40,16 @@ const platforms = [
 ];
 
 
-
+const stars = [
+  { x: 300, y: 290, collected: false },
+  { x: 500, y: 220, collected: false },
+  { x: 680, y: 80, collected: false },
+  { x: 850, y: 230, collected: false },
+  { x: 1050, y: 170, collected: false },
+  { x: 1300, y: 240, collected: false }
+];
+ 
+let score = 0;
 
 
 const keys = {};
@@ -57,6 +66,28 @@ window.addEventListener("keydown", function(event) {
 window.addEventListener("keyup", function(event) {
   keys[event.key] = false;
 });
+
+function drawStar(x, y, size) {
+  ctx.beginPath();
+
+  for (let i = 0; i < 10; i++) {
+    const radius = i % 2 === 0 ? size : size / 2;
+    const angle = (Math.PI / 5) * i - Math.PI / 2;
+
+    const starX = x + Math.cos(angle) * radius;
+    const starY = y + Math.sin(angle) * radius;
+
+    if (i === 0) {
+      ctx.moveTo(starX, starY);
+    } else {
+      ctx.lineTo(starX, starY);
+    }
+  }
+
+  ctx.closePath();
+  ctx.fillStyle = "#FFD700";
+  ctx.fill();
+}
 
 function update() {
   // Horizontal movement.
@@ -113,6 +144,21 @@ function update() {
     }
   }
 
+
+  // Check whether the player collects a star.
+  for (const star of stars) {
+    if (!star.collected) {
+      const distanceX = player.x + player.width / 2 - star.x;
+      const distanceY = player.y + player.height / 2 - star.y;
+      const distance = Math.sqrt(distanceX ** 2 + distanceY ** 2);
+
+      if (distance < 25) {
+        star.collected = true;
+        score++;
+      }
+    }
+  }
+
   // Keep the camera slightly ahead of / behind the player.
   const leftMargin = 200;
   const rightMargin = 600;
@@ -153,6 +199,13 @@ function draw() {
     );
   }
 
+// Draw collectible stars.
+for (const star of stars) {
+  if (!star.collected) {
+    drawStar(star.x, star.y, 12);
+  }
+}
+
   // Player sprite. The camera translation is already applied, so use
   // the player's world coordinates directly here.
   if (playerImage.complete && playerImage.naturalWidth > 0) {
@@ -170,6 +223,11 @@ function draw() {
   }
 
   ctx.restore();
+  // Draw the score on the screen.
+  ctx.fillStyle = "white";
+  ctx.font = "24px Arial";
+  ctx.textAlign = "left";
+  ctx.fillText("Stars: " + score, 20, 35);
 }
 
 function gameLoop() {
