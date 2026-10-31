@@ -37,7 +37,7 @@ const platforms = [
   { x: 200, y: 200, width: 80, height: 10, color: "blue" },
   { x: 400, y: 260, width: 140, height: 10, color: "blue" },
   { x: 600, y: 320, width: 120, height: 10, color: "red" },
-  { x: 760, y: 270, width: 140, height: 10, color: "blue" },
+  { x: 760, y: 140, width: 140, height: 12, color: "red" },
   { x: 980, y: 210, width: 130, height: 10, color: "green" },
   { x: 1200, y: 280, width: 160, height: 10, color: "red" },
   { x: 1450, y: 220, width: 140, height: 10, color: "blue" },
@@ -52,6 +52,8 @@ const platforms = [
   { x: 1400, y: -100, width: 120, height: 10, color: "pink" },
   { x: 1900, y: -400, width: 120, height: 10, color: "pink" },
   { x: 640, y: 200, width: 70, height: 10, color: "pink" },
+  { x: 760, y: 270, width: 140, height: 10, color: "pink" },
+
 
   // Higher platforms.
   { x: 1800, y: -100, width: 150, height: 10, color: "red" },
@@ -59,18 +61,18 @@ const platforms = [
   { x: 1300, y: -400, width: 150, height: 10, color: "green" },
   { x: 1050, y: -550, width: 150, height: 10, color: "red" },
   { x: 800, y: -700, width: 150, height: 10, color: "blue" },
-  { x: 550, y: -880, width: 150, height: 10, color: "green" }
+  { x: 550, y: -880, width: 150, height: 10, color: "green" },
 ]; 
 
 // Collectible fruit.
 const fruits = [
   { x: 300, y: 290, color: "red", collected: false },
   { x: 500, y: 220, color: "blue", collected: false },
-  { x: 850, y: 230, color: "red", collected: false },
-  { x: 1050, y: 170, color: "blue", collected: false },
-  { x: 1300, y: 240, color: "green", collected: false },
+  { x: 1350, y: 240, color: "blue", collected: false },
   { x: 60, y: 120, color: "red", collected: false },
   { x: 340, y: 30, color: "green", collected: false },
+  { x: 880, y: 250, color: "red", collected: false },
+  { x: 900, y: 125, color: "green", collected: false },
 ];
 
 // Collectible stars.
@@ -78,9 +80,9 @@ const stars = [
   { x: 220, y: 180, collected: false },
   { x: 420, y: 100, collected: false },
   { x: 680, y: 180, collected: false },
-  { x: 950, y: 230, collected: false },
-  { x: 1050, y: 170, collected: false },
-  { x: 1300, y: 240, collected: false }
+  { x: 1050, y: 250, collected: false },
+  { x: 1350, y: 170, collected: false },
+  { x: 1600, y: 240, collected: false }
 ];
 
 let score = 0;
