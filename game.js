@@ -24,6 +24,7 @@ const player = {
 
 const platforms = [
   { x: 200, y: 330, width: 140, height: 10 },
+  { x: 300, y: 50, width: 70, height: 10 },
   { x: 400, y: 130, width: 40, height: 10 },
   { x: 0, y: 150, width: 180, height: 10 },
   { x: 200, y: 200, width: 80, height: 10 },
@@ -38,7 +39,6 @@ const platforms = [
   { x: 600, y: 100, width: 100, height: 10 },
   { x: 2000, y: 230, width: 150, height: 10 }
 ];
-
 
 const stars = [
   { x: 300, y: 290, collected: false },
@@ -184,7 +184,7 @@ function draw() {
   ctx.translate(-camera.x, 0);
 
   // Ground.
-  ctx.fillStyle = "#477a45";
+  ctx.fillStyle = "#1132a0";
   ctx.fillRect(0, 400, worldWidth, 50);
 
   // Platforms.
