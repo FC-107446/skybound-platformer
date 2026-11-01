@@ -52,7 +52,7 @@ const platforms = [
   { x: 1400, y: -100, width: 120, height: 10, color: "pink" },
   { x: 1900, y: -400, width: 120, height: 10, color: "pink" },
   { x: 640, y: 200, width: 70, height: 10, color: "pink" },
-  { x: 760, y: 270, width: 140, height: 10, color: "pink" },
+  { x: 740, y: 270, width: 80, height: 10, color: "pink" },
 
 
   // Higher platforms.
@@ -71,7 +71,7 @@ const fruits = [
   { x: 1350, y: 240, color: "blue", collected: false },
   { x: 60, y: 120, color: "red", collected: false },
   { x: 340, y: 30, color: "green", collected: false },
-  { x: 880, y: 250, color: "red", collected: false },
+  { x: 830, y: 250, color: "red", collected: false },
   { x: 900, y: 125, color: "green", collected: false },
 ];
 
