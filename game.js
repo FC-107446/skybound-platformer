@@ -25,14 +25,14 @@ const player = {
   onGround: false
 };
 
-// Currently active fruit/platform colour.
+// Currently active fruit/platform colour
 let activePlatformColor = null;
 
 // Platforms.
 const platforms = [
   { x: 200, y: 330, width: 140, height: 10, color: "red" },
   { x: 300, y: 50, width: 70, height: 10, color: "blue" },
-  { x: 400, y: 130, width: 40, height: 10, color: "green" },
+  { x: 400, y: 110, width: 40, height: 10, color: "green" },
   { x: 0, y: 150, width: 180, height: 10, color: "pink" },
   { x: 200, y: 200, width: 80, height: 10, color: "blue" },
   { x: 400, y: 260, width: 140, height: 10, color: "blue" },
@@ -78,7 +78,7 @@ const fruits = [
 // Collectible stars.
 const stars = [
   { x: 220, y: 180, collected: false },
-  { x: 420, y: 100, collected: false },
+  { x: 420, y: 80, collected: false },
   { x: 680, y: 180, collected: false },
   { x: 1050, y: 250, collected: false },
   { x: 1350, y: 170, collected: false },
@@ -326,15 +326,27 @@ function draw() {
 
   // Draw platforms.
   for (const platform of platforms) {
-    ctx.fillStyle = platformColors[platform.color];
+
+    // Check whether this platform can be used.
+   const canUsePlatform =
+     platform.color === "pink" ||
+     platform.color === activePlatformColor;
+
+   // Make unusable platforms transparent.
+   ctx.globalAlpha = canUsePlatform ? 1 : 0.3;
+
+   ctx.fillStyle = platformColors[platform.color];
 
     ctx.fillRect(
-      platform.x,
+     platform.x,
       platform.y,
-      platform.width,
+     platform.width,
       platform.height
-    );
+   );
   }
+
+  // Reset transparency for everything else.
+  ctx.globalAlpha = 1; 
 
   // Draw stars.
   for (const star of stars) {
