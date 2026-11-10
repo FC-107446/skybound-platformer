@@ -25,7 +25,12 @@ const player = {
   onGround: false
 };
 
-// Currently active fruit/platform colour
+// Timer.
+let startTime = null;
+let elapsedTime = 0;
+let showTimer = true;
+
+// Currently active fruit/platform colour.
 let activePlatformColor = null;
 
 // Platforms.
@@ -54,15 +59,14 @@ const platforms = [
   { x: 640, y: 200, width: 70, height: 10, color: "pink" },
   { x: 740, y: 270, width: 80, height: 10, color: "pink" },
 
-
   // Higher platforms.
   { x: 1800, y: -100, width: 150, height: 10, color: "red" },
   { x: 1550, y: -250, width: 150, height: 10, color: "blue" },
   { x: 1300, y: -400, width: 150, height: 10, color: "green" },
   { x: 1050, y: -550, width: 150, height: 10, color: "red" },
   { x: 800, y: -700, width: 150, height: 10, color: "blue" },
-  { x: 550, y: -880, width: 150, height: 10, color: "green" },
-]; 
+  { x: 550, y: -880, width: 150, height: 10, color: "green" }
+];
 
 // Collectible fruit.
 const fruits = [
@@ -72,7 +76,7 @@ const fruits = [
   { x: 60, y: 120, color: "red", collected: false },
   { x: 340, y: 30, color: "green", collected: false },
   { x: 830, y: 250, color: "red", collected: false },
-  { x: 900, y: 125, color: "green", collected: false },
+  { x: 900, y: 125, color: "green", collected: false }
 ];
 
 // Collectible stars.
@@ -88,19 +92,65 @@ const stars = [
 let score = 0;
 let levelComplete = false;
 
-const keys = {};
+const keys = {
+  left: false,
+  right: false,
+  jump: false
+};
 
 // Keyboard controls.
 window.addEventListener("keydown", function(event) {
-  keys[event.key] = true;
+  const key = event.key.toLowerCase();
 
-  if (event.key === " " || event.key.startsWith("Arrow")) {
+  if (
+    event.code === "Space" ||
+    event.key.startsWith("Arrow")
+  ) {
     event.preventDefault();
+  }
+
+  // Movement.
+  if (key === "arrowleft" || key === "a") {
+    keys.left = true;
+  }
+
+  if (key === "arrowright" || key === "d") {
+    keys.right = true;
+  }
+
+  // Jumping.
+  if (
+    key === "arrowup" ||
+    key === "w" ||
+    event.code === "Space"
+  ) {
+    keys.jump = true;
+  }
+
+  // Show/hide timer.
+  if (key === "t" && !event.repeat) {
+    showTimer = !showTimer;
   }
 });
 
 window.addEventListener("keyup", function(event) {
-  keys[event.key] = false;
+  const key = event.key.toLowerCase();
+
+  if (key === "arrowleft" || key === "a") {
+    keys.left = false;
+  }
+
+  if (key === "arrowright" || key === "d") {
+    keys.right = false;
+  }
+
+  if (
+    key === "arrowup" ||
+    key === "w" ||
+    event.code === "Space"
+  ) {
+    keys.jump = false;
+  }
 });
 
 // Draw a five-pointed star.
@@ -144,12 +194,21 @@ function drawFruit(x, y, color) {
 function update() {
   if (levelComplete) return;
 
+  // Start timer when the player first moves.
+  if ((keys.left || keys.right) && startTime === null) {
+    startTime = performance.now();
+  }
+
+  if (startTime !== null) {
+    elapsedTime = performance.now() - startTime;
+  }
+
   // Horizontal movement.
-  if (keys["ArrowLeft"]) {
+  if (keys.left) {
     player.x -= player.speed;
   }
 
-  if (keys["ArrowRight"]) {
+  if (keys.right) {
     player.x += player.speed;
   }
 
@@ -160,7 +219,7 @@ function update() {
   );
 
   // Jump.
-  if (keys[" "] && player.onGround) {
+  if (keys.jump && player.onGround) {
     player.velocityY = -player.jumpStrength;
     player.onGround = false;
   }
@@ -190,7 +249,7 @@ function update() {
     for (const platform of platforms) {
 
       // Pink platforms are always usable.
-      // Other platforms require the matching fruit colour.
+      // Other platforms require matching fruit.
       if (
         platform.color !== "pink" &&
         platform.color !== activePlatformColor
@@ -232,12 +291,12 @@ function update() {
 
       if (distance < 25) {
 
-        // Make all previously collected fruit reappear.
+        // Make previously collected fruit reappear.
         for (const previousFruit of fruits) {
           previousFruit.collected = false;
         }
 
-        // Hide the newly collected fruit.
+        // Hide newly collected fruit.
         fruit.collected = true;
 
         // Switch active platform colour.
@@ -328,25 +387,25 @@ function draw() {
   for (const platform of platforms) {
 
     // Check whether this platform can be used.
-   const canUsePlatform =
-     platform.color === "pink" ||
-     platform.color === activePlatformColor;
+    const canUsePlatform =
+      platform.color === "pink" ||
+      platform.color === activePlatformColor;
 
-   // Make unusable platforms transparent.
-   ctx.globalAlpha = canUsePlatform ? 1 : 0.3;
+    // Make unusable platforms transparent.
+    ctx.globalAlpha = canUsePlatform ? 1 : 0.3;
 
-   ctx.fillStyle = platformColors[platform.color];
+    ctx.fillStyle = platformColors[platform.color];
 
     ctx.fillRect(
-     platform.x,
+      platform.x,
       platform.y,
-     platform.width,
+      platform.width,
       platform.height
-   );
+    );
   }
 
-  // Reset transparency for everything else.
-  ctx.globalAlpha = 1; 
+  // Reset transparency.
+  ctx.globalAlpha = 1;
 
   // Draw stars.
   for (const star of stars) {
@@ -401,6 +460,24 @@ function draw() {
     65
   );
 
+  // Timer display.  
+  if (showTimer) {
+    const totalSeconds = Math.floor(elapsedTime / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const milliseconds = Math.floor(elapsedTime % 1000);
+
+    const timeText =
+     minutes + ":" +
+      String(seconds).padStart(2, "0") + "." +
+      String(milliseconds).padStart(3, "0");
+        ctx.fillText(
+      "Time: " + timeText,
+      20,
+      95
+    );
+  }
+
   // Level completion message.
   if (levelComplete) {
     ctx.fillStyle = "white";
@@ -419,7 +496,6 @@ function draw() {
 function gameLoop() {
   update();
   draw();
-
   requestAnimationFrame(gameLoop);
 }
 
