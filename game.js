@@ -5,14 +5,15 @@ const ctx = canvas.getContext("2d");
 const playerImage = new Image();
 playerImage.src = "images/player.png";
 
-// Camera position.
+// World and camera.
+const worldWidth = 2050;
+
 const camera = {
   x: 0,
   y: 0
 };
 
-const worldWidth = 2200;
-
+// Player.
 const player = {
   x: 100,
   y: 300,
@@ -30,6 +31,10 @@ let startTime = null;
 let elapsedTime = 0;
 let showTimer = true;
 
+// Developer modes.
+let editMode = false;
+let godMode = false;
+
 // Currently active fruit/platform colour.
 let activePlatformColor = null;
 
@@ -46,10 +51,7 @@ const platforms = [
   { x: 980, y: 210, width: 130, height: 10, color: "green" },
   { x: 1200, y: 280, width: 160, height: 10, color: "red" },
   { x: 1450, y: 220, width: 140, height: 10, color: "blue" },
-  { x: 1700, y: 300, width: 180, height: 10, color: "green" },
-  { x: 1900, y: 250, width: 150, height: 10, color: "red" },
   { x: 600, y: 100, width: 100, height: 10, color: "blue" },
-  { x: 2000, y: 230, width: 150, height: 10, color: "green" },
 
   // Additional pink platforms.
   { x: 100, y: 100, width: 120, height: 10, color: "pink" },
@@ -86,19 +88,20 @@ const stars = [
   { x: 680, y: 180, collected: false },
   { x: 1050, y: 250, collected: false },
   { x: 1350, y: 170, collected: false },
-  { x: 1600, y: 240, collected: false }
+  { x: 1600, y: 200, collected: false }
 ];
 
 let score = 0;
 let levelComplete = false;
 
+// Keyboard controls.
 const keys = {
   left: false,
   right: false,
-  jump: false
+  jump: false,
+  down: false
 };
 
-// Keyboard controls.
 window.addEventListener("keydown", function(event) {
   const key = event.key.toLowerCase();
 
@@ -107,6 +110,25 @@ window.addEventListener("keydown", function(event) {
     event.key.startsWith("Arrow")
   ) {
     event.preventDefault();
+  }
+
+  // Developer mode shortcuts.
+  if (
+    event.ctrlKey &&
+    event.shiftKey &&
+    key === "e" &&
+    !event.repeat
+  ) {
+    editMode = !editMode;
+  }
+
+  if (
+    event.ctrlKey &&
+    event.shiftKey &&
+    key === "g" &&
+    !event.repeat
+  ) {
+    godMode = !godMode;
   }
 
   // Movement.
@@ -118,7 +140,11 @@ window.addEventListener("keydown", function(event) {
     keys.right = true;
   }
 
-  // Jumping.
+  if (key === "arrowdown" || key === "s") {
+    keys.down = true;
+  }
+
+  // Jumping and flying upwards.
   if (
     key === "arrowup" ||
     key === "w" ||
@@ -142,6 +168,10 @@ window.addEventListener("keyup", function(event) {
 
   if (key === "arrowright" || key === "d") {
     keys.right = false;
+  }
+
+  if (key === "arrowdown" || key === "s") {
+    keys.down = false;
   }
 
   if (
@@ -195,7 +225,10 @@ function update() {
   if (levelComplete) return;
 
   // Start timer when the player first moves.
-  if ((keys.left || keys.right) && startTime === null) {
+  if (
+    (keys.left || keys.right || keys.jump || keys.down) &&
+    startTime === null
+  ) {
     startTime = performance.now();
   }
 
@@ -218,116 +251,131 @@ function update() {
     Math.min(worldWidth - player.width, player.x)
   );
 
-  // Jump.
-  if (keys.jump && player.onGround) {
-    player.velocityY = -player.jumpStrength;
-    player.onGround = false;
-  }
-
-  // Gravity and vertical movement.
-  const previousBottom = player.y + player.height;
-
-  player.velocityY += player.gravity;
-  player.y += player.velocityY;
-
-  player.onGround = false;
-
-  // Ground collision.
-  const groundY = 400;
-
-  if (
-    player.y + player.height >= groundY &&
-    player.velocityY >= 0
-  ) {
-    player.y = groundY - player.height;
-    player.velocityY = 0;
-    player.onGround = true;
-  }
-
-  // Platform collision.
-  if (player.velocityY >= 0) {
-    for (const platform of platforms) {
-
-      // Pink platforms are always usable.
-      // Other platforms require matching fruit.
-      if (
-        platform.color !== "pink" &&
-        platform.color !== activePlatformColor
-      ) {
-        continue;
-      }
-
-      const currentBottom = player.y + player.height;
-
-      const overlapsHorizontally =
-        player.x + player.width > platform.x &&
-        player.x < platform.x + platform.width;
-
-      const crossedPlatformTop =
-        previousBottom <= platform.y &&
-        currentBottom >= platform.y;
-
-      if (overlapsHorizontally && crossedPlatformTop) {
-        player.y = platform.y - player.height;
-        player.velocityY = 0;
-        player.onGround = true;
-        break;
-      }
+  if (godMode) {
+    // Free vertical movement in god mode.
+    if (keys.jump) {
+      player.y -= player.speed;
     }
-  }
 
-  // Collect fruit.
-  for (const fruit of fruits) {
-    if (!fruit.collected) {
-      const distanceX =
-        player.x + player.width / 2 - fruit.x;
+    if (keys.down) {
+      player.y += player.speed;
+    }
 
-      const distanceY =
-        player.y + player.height / 2 - fruit.y;
+    player.velocityY = 0;
+    player.onGround = false;
 
-      const distance = Math.sqrt(
-        distanceX ** 2 + distanceY ** 2
-      );
+  } else {
+    // Normal jumping.
+    if (keys.jump && player.onGround) {
+      player.velocityY = -player.jumpStrength;
+      player.onGround = false;
+    }
 
-      if (distance < 25) {
+    // Gravity and vertical movement.
+    const previousBottom = player.y + player.height;
 
-        // Make previously collected fruit reappear.
-        for (const previousFruit of fruits) {
-          previousFruit.collected = false;
+    player.velocityY += player.gravity;
+    player.y += player.velocityY;
+
+    player.onGround = false;
+
+    // Ground collision.
+    const groundY = 400;
+
+    if (
+      player.y + player.height >= groundY &&
+      player.velocityY >= 0
+    ) {
+      player.y = groundY - player.height;
+      player.velocityY = 0;
+      player.onGround = true;
+    }
+
+    // Platform collision.
+    if (player.velocityY >= 0) {
+      for (const platform of platforms) {
+        // Pink platforms are always usable.
+        // Other platforms require matching fruit.
+        if (
+          platform.color !== "pink" &&
+          platform.color !== activePlatformColor
+        ) {
+          continue;
         }
 
-        // Hide newly collected fruit.
-        fruit.collected = true;
+        const currentBottom = player.y + player.height;
 
-        // Switch active platform colour.
-        activePlatformColor = fruit.color;
+        const overlapsHorizontally =
+          player.x + player.width > platform.x &&
+          player.x < platform.x + platform.width;
+
+        const crossedPlatformTop =
+          previousBottom <= platform.y &&
+          currentBottom >= platform.y;
+
+        if (overlapsHorizontally && crossedPlatformTop) {
+          player.y = platform.y - player.height;
+          player.velocityY = 0;
+          player.onGround = true;
+          break;
+        }
       }
     }
   }
 
-  // Collect stars.
-  for (const star of stars) {
-    if (!star.collected) {
-      const distanceX =
-        player.x + player.width / 2 - star.x;
+  // Collect fruit (disabled in god mode).
+  if (!godMode) {
+    for (const fruit of fruits) {
+      if (!fruit.collected) {
+        const distanceX =
+          player.x + player.width / 2 - fruit.x;
 
-      const distanceY =
-        player.y + player.height / 2 - star.y;
+        const distanceY =
+          player.y + player.height / 2 - fruit.y;
 
-      const distance = Math.sqrt(
-        distanceX ** 2 + distanceY ** 2
-      );
+        const distance = Math.sqrt(
+          distanceX ** 2 + distanceY ** 2
+        );
 
-      if (distance < 25) {
-        star.collected = true;
-        score++;
+        if (distance < 25) {
+          // Make previously collected fruit reappear.
+          for (const previousFruit of fruits) {
+            previousFruit.collected = false;
+          }
+
+          // Hide newly collected fruit.
+          fruit.collected = true;
+
+          // Switch active platform colour.
+          activePlatformColor = fruit.color;
+        }
       }
     }
-  }
 
-  // Check level completion.
-  if (stars.every(star => star.collected)) {
-    levelComplete = true;
+    // Collect stars.
+    for (const star of stars) {
+      if (!star.collected) {
+        const distanceX =
+          player.x + player.width / 2 - star.x;
+
+        const distanceY =
+          player.y + player.height / 2 - star.y;
+
+        const distance = Math.sqrt(
+          distanceX ** 2 + distanceY ** 2
+        );
+
+        if (distance < 25) {
+          star.collected = true;
+          score++;
+        }
+      }
+    }
+
+    // Check level completion.
+    if (stars.every(star => star.collected)) {
+      levelComplete = true;
+    }
   }
 
   // Horizontal camera movement.
@@ -342,6 +390,7 @@ function update() {
     camera.x = player.x + player.width - rightMargin;
   }
 
+  // Keep camera inside the level.
   camera.x = Math.max(
     0,
     Math.min(worldWidth - canvas.width, camera.x)
@@ -359,8 +408,72 @@ function update() {
     camera.y = player.y + player.height - bottomMargin;
   }
 
-  // Limit camera movement.
+  // Limit vertical camera movement.
   camera.y = Math.max(-1000, Math.min(0, camera.y));
+}
+
+// Draw the mini-map.
+function drawMiniMap() {
+  if (!editMode) return;
+
+  const mapWidth = 240;
+  const mapHeight = 150;
+
+  const mapX = canvas.width - mapWidth - 15;
+  const mapY = 15;
+
+  const minY = -900;
+  const maxY = 450;
+
+  const scaleX = mapWidth / worldWidth;
+  const scaleY = mapHeight / (maxY - minY);
+
+  // Background.
+  ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+  ctx.fillRect(mapX, mapY, mapWidth, mapHeight);
+
+  // Border.
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(mapX, mapY, mapWidth, mapHeight);
+
+  // Platforms.
+  for (const platform of platforms) {
+    ctx.fillStyle = platform.color;
+
+    ctx.fillRect(
+      mapX + platform.x * scaleX,
+      mapY + (platform.y - minY) * scaleY,
+      Math.max(2, platform.width * scaleX),
+      Math.max(2, platform.height * scaleY)
+    );
+  }
+
+  // Ground.
+  ctx.fillStyle = "#1132a0";
+
+  ctx.fillRect(
+    mapX,
+    mapY + (400 - minY) * scaleY,
+    mapWidth,
+    3
+  );
+
+  // Player.
+  ctx.fillStyle = "yellow";
+
+  ctx.fillRect(
+    mapX + player.x * scaleX - 2,
+    mapY + (player.y - minY) * scaleY - 2,
+    5,
+    5
+  );
+
+  // Title.
+  ctx.fillStyle = "white";
+  ctx.font = "12px Arial";
+  ctx.textAlign = "left";
+  ctx.fillText("LEVEL OVERVIEW", mapX + 8, mapY + 13);
 }
 
 // Draw the game.
@@ -384,16 +497,15 @@ function draw() {
   };
 
   // Draw platforms.
-  for (const platform of platforms) {
+  for (let i = 0; i < platforms.length; i++) {
+    const platform = platforms[i];
 
-    // Check whether this platform can be used.
     const canUsePlatform =
       platform.color === "pink" ||
       platform.color === activePlatformColor;
 
     // Make unusable platforms transparent.
     ctx.globalAlpha = canUsePlatform ? 1 : 0.3;
-
     ctx.fillStyle = platformColors[platform.color];
 
     ctx.fillRect(
@@ -402,6 +514,31 @@ function draw() {
       platform.width,
       platform.height
     );
+
+    // Edit mode platform outlines and coordinates.
+    if (editMode) {
+      ctx.globalAlpha = 1;
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+
+      ctx.strokeRect(
+        platform.x,
+        platform.y,
+        platform.width,
+        platform.height
+      );
+
+      ctx.fillStyle = "white";
+      ctx.font = "12px Arial";
+      ctx.textAlign = "left";
+
+      ctx.fillText(
+        `#${i + 1} (${platform.x}, ${platform.y})`,
+        platform.x,
+        platform.y - 8
+      );
+    }
   }
 
   // Reset transparency.
@@ -420,6 +557,11 @@ function draw() {
       drawFruit(fruit.x, fruit.y, fruit.color);
     }
   }
+
+  // Draw left and right walls.
+  ctx.fillStyle = "#1132a0";
+  ctx.fillRect(-10, -1000, 10, 1450);
+  ctx.fillRect(worldWidth, -1000, 10, 1450);
 
   // Draw player.
   if (playerImage.complete && playerImage.naturalWidth > 0) {
@@ -442,6 +584,9 @@ function draw() {
 
   ctx.restore();
 
+  // Mini-map.
+  drawMiniMap();
+
   // Score display.
   ctx.fillStyle = "white";
   ctx.font = "24px Arial";
@@ -460,7 +605,7 @@ function draw() {
     65
   );
 
-  // Timer display.  
+  // Timer display.
   if (showTimer) {
     const totalSeconds = Math.floor(elapsedTime / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -468,13 +613,48 @@ function draw() {
     const milliseconds = Math.floor(elapsedTime % 1000);
 
     const timeText =
-     minutes + ":" +
+      minutes + ":" +
       String(seconds).padStart(2, "0") + "." +
       String(milliseconds).padStart(3, "0");
-        ctx.fillText(
+
+    ctx.fillText(
       "Time: " + timeText,
       20,
       95
+    );
+  }
+
+  // On-screen controls guide.
+  ctx.font = "13px Arial";
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+  ctx.fillRect(15, canvas.height - 105, 245, 90);
+
+  ctx.fillStyle = "white";
+
+  ctx.fillText("CONTROLS", 25, canvas.height - 85);
+  ctx.fillText("Move: WASD / Arrow keys", 25, canvas.height - 67);
+  ctx.fillText("Jump: Space / W / Up", 25, canvas.height - 49);
+  ctx.fillText("Toggle timer: T", 25, canvas.height - 31);
+
+  // Developer mode controls.
+  if (editMode || godMode) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+    ctx.fillRect(15, 115, 190, 48);
+
+    ctx.fillStyle = "#7df9ff";
+    ctx.font = "13px Arial";
+
+    ctx.fillText(
+      "EDIT MODE: " + (editMode ? "ON" : "OFF"),
+      25,
+      135
+    );
+
+    ctx.fillText(
+      "GOD MODE: " + (godMode ? "ON" : "OFF"),
+      25,
+      153
     );
   }
 
