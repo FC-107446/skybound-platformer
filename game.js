@@ -5,14 +5,21 @@ const ctx = canvas.getContext("2d");
 const playerImage = new Image();
 playerImage.src = "images/player.png";
 
-// World and camera.
+// =====================================================
+// WORLD AND CAMERA
+// =====================================================
+
 const worldWidth = 2050;
+
 const camera = {
   x: 0,
   y: 0
 };
 
-// Player.
+// =====================================================
+// PLAYER
+// =====================================================
+
 const player = {
   x: 100,
   y: 300,
@@ -25,18 +32,30 @@ const player = {
   onGround: false
 };
 
-// Timer.
+// =====================================================
+// TIMER AND LEVEL PROGRESSION
+// =====================================================
+
 let startTime = null;
 let elapsedTime = 0;
 let showTimer = true;
 
-// Build mode combines editing and god mode.
-let editMode = false;
+// The time at which the completion screen appeared
+let levelCompleteTime = null;
 
-// Currently active fruit/platform colour.
+// Whether the player has completed every level
+let gameFinished = false;
+
+// How long the completion screen stays visible
+const LEVEL_COMPLETE_DURATION = 3000;
+
+// =====================================================
+// GAME SETTINGS
+// =====================================================
+
+let editMode = false;
 let activePlatformColor = null;
 
-// Browser storage key for saved levels.
 const SAVE_KEY = "skybound-levels-v1";
 const validColours = ["red", "blue", "green", "pink"];
 
@@ -57,6 +76,7 @@ const level1Platforms = [
   { x: 1200, y: 280, width: 160, height: 10, color: "red" },
   { x: 1450, y: 220, width: 140, height: 10, color: "blue" },
   { x: 600, y: 100, width: 100, height: 10, color: "blue" },
+
   // Additional pink platforms.
   { x: 100, y: 100, width: 120, height: 10, color: "pink" },
   { x: 900, y: 100, width: 120, height: 10, color: "pink" },
@@ -64,6 +84,7 @@ const level1Platforms = [
   { x: 1900, y: -400, width: 120, height: 10, color: "pink" },
   { x: 640, y: 200, width: 70, height: 10, color: "pink" },
   { x: 740, y: 270, width: 80, height: 10, color: "pink" },
+
   // Higher platforms.
   { x: 1800, y: -100, width: 150, height: 10, color: "red" },
   { x: 1550, y: -250, width: 150, height: 10, color: "blue" },
@@ -96,9 +117,8 @@ const level1Stars = [
 // LEVELS
 // =====================================================
 
-// These are the built-in levels.
-// If levels.js has been exported and added to index.html,
-// its levels replace these defaults.
+// These are the built-in levels
+// If levels.js has been exported and added to index.html its levels replace these defaults
 
 const defaultLevels = [
   {
@@ -129,8 +149,8 @@ const startingLevels = hasPublishedLevels
   ? window.SKYBOUND_LEVELS
   : defaultLevels;
 
-// Copy the level data so game progress never changes
-// the original level data.
+// Copy the level data so gameplay never change
+// the original level definitions
 const levels = startingLevels.map((level, index) => ({
   name: typeof level.name === "string"
     ? level.name
@@ -164,6 +184,10 @@ function getCurrentLevel() {
   return levels[currentLevelIndex];
 }
 
+// ==============================================
+// RESET PLAYER AND LEVEL STATE
+// ==============================================
+
 function clearMovementKeys() {
   keys.left = false;
   keys.right = false;
@@ -183,9 +207,21 @@ function resetPlayerAndCamera() {
   clearMovementKeys();
 }
 
-// =====================================================
+function resetLevelState() {
+  resetPlayerAndCamera();
+
+  activePlatformColor = null;
+
+  startTime = null;
+  elapsedTime = 0;
+
+  levelCompleteTime = null;
+  gameFinished = false;
+}
+
+// ===================================================
 // KEYBOARD CONTROLS
-// =====================================================
+// ===================================================
 
 const keys = {
   left: false,
@@ -197,7 +233,7 @@ const keys = {
 window.addEventListener("keydown", function(event) {
   const key = event.key.toLowerCase();
 
-  // Don't control the game while using editor inputs.
+  // Don't control the game while using editor inputs
   if (
     ["INPUT", "SELECT", "TEXTAREA"].includes(
       event.target?.tagName
@@ -213,7 +249,7 @@ window.addEventListener("keydown", function(event) {
     event.preventDefault();
   }
 
-  // Toggle the combined Build Mode.
+  // Toggle Build Mode
   if (
     event.ctrlKey &&
     event.shiftKey &&
@@ -231,7 +267,7 @@ window.addEventListener("keydown", function(event) {
     updateEditorVisibility();
   }
 
-  // Movement.
+  // Movement
   if (key === "arrowleft" || key === "a") {
     keys.left = true;
   }
@@ -244,7 +280,7 @@ window.addEventListener("keydown", function(event) {
     keys.down = true;
   }
 
-  // Jump normally, fly upwards in Build Mode.
+  // Jump normally, fly upwards in Build Mode
   if (
     key === "arrowup" ||
     key === "w" ||
@@ -358,8 +394,7 @@ levels.forEach((level, index) => {
 levelSelect.addEventListener("change", function() {
   currentLevelIndex = Number(levelSelect.value);
 
-  resetPlayerAndCamera();
-  activePlatformColor = null;
+  resetLevelState();
 });
 
 // Object type selector.
@@ -686,6 +721,11 @@ function restoreLevelsFromData(data) {
   levelSelect.value = String(currentLevelIndex);
 
   resetPlayerAndCamera();
+
+  startTime = null;
+  elapsedTime = 0;
+  levelCompleteTime = null;
+  gameFinished = false;
 }
 
 function loadLevels(showStatus = true) {
@@ -800,7 +840,6 @@ exportButton.addEventListener(
 
 // Restore browser-saved levels only when there is
 // no published levels.js.
-// This keeps the published levels as the website default.
 if (!hasPublishedLevels) {
   loadLevels(false);
 }
@@ -880,6 +919,8 @@ canvas.addEventListener("click", function(event) {
   // Adding something to a completed level makes
   // it editable and playable again.
   currentLevel.complete = false;
+  levelCompleteTime = null;
+  gameFinished = false;
 });
 
 // =====================================================
@@ -937,15 +978,60 @@ function drawFruit(x, y, color) {
 }
 
 // =====================================================
+// LEVEL PROGRESSION
+// =====================================================
+
+function progressToNextLevel() {
+  // Check whether another level exists.
+  if (currentLevelIndex < levels.length - 1) {
+
+    currentLevelIndex++;
+
+    // Update the editor's level selector too.
+    levelSelect.value = String(currentLevelIndex);
+
+    // Reset player, camera, timer and fruit colour.
+    resetLevelState();
+
+  } else {
+
+    // There are no more levels.
+    gameFinished = true;
+    levelCompleteTime = null;
+
+    clearMovementKeys();
+  }
+}
+
+// =====================================================
 // UPDATE GAME LOGIC
 // =====================================================
 
 function update() {
   const currentLevel = getCurrentLevel();
 
-  // Completed levels stop normal gameplay,
-  // but remain editable in Build Mode.
+  // Stop gameplay after winning.
+  // Build Mode can still be used.
+  if (gameFinished && !editMode) {
+    return;
+  }
+
+  // Handle the level completion countdown.
   if (currentLevel.complete && !editMode) {
+
+    // Start the countdown if it hasn't started.
+    if (levelCompleteTime === null) {
+      levelCompleteTime = performance.now();
+    }
+
+    // Wait three seconds before progressing.
+    if (
+      performance.now() - levelCompleteTime >=
+      LEVEL_COMPLETE_DURATION
+    ) {
+      progressToNextLevel();
+    }
+
     return;
   }
 
@@ -979,6 +1065,7 @@ function update() {
   );
 
   if (editMode) {
+
     // Build Mode: free movement.
     // No gravity or platform collision.
     if (keys.jump) {
@@ -997,7 +1084,9 @@ function update() {
 
     player.velocityY = 0;
     player.onGround = false;
+
   } else {
+
     // Normal jumping.
     if (keys.jump && player.onGround) {
       player.velocityY = -player.jumpStrength;
@@ -1026,6 +1115,7 @@ function update() {
     // Platform collision.
     if (player.velocityY >= 0) {
       for (const platform of currentLevel.platforms) {
+
         // Pink platforms are always usable.
         // Other platforms require matching fruit.
         if (
@@ -1060,6 +1150,7 @@ function update() {
 
   // Collect fruit and stars during normal gameplay only.
   if (!editMode) {
+
     // Collect fruit.
     for (const fruit of currentLevel.fruits) {
       if (!fruit.collected) {
@@ -1074,6 +1165,7 @@ function update() {
         );
 
         if (distance < 25) {
+
           // Make previous fruit reappear.
           for (
             const previousFruit of currentLevel.fruits
@@ -1116,6 +1208,7 @@ function update() {
       currentLevel.stars.every(star => star.collected)
     ) {
       currentLevel.complete = true;
+      levelCompleteTime = performance.now();
     }
   }
 
@@ -1472,18 +1565,63 @@ function draw() {
     );
   }
 
-  // Level completion message.
-  // Hide it while building so the level remains visible.
-  if (currentLevel.complete && !editMode) {
-    ctx.fillStyle = "white";
-    ctx.font = "36px Arial";
+  // Level completion and victory screens.
+  // Hide these while building so the level remains visible.
+  if (!editMode && (currentLevel.complete || gameFinished)) {
+
+    // Dark transparent background.
+    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
     ctx.textAlign = "center";
 
-    ctx.fillText(
-      "LEVEL COMPLETE!",
-      canvas.width / 2,
-      canvas.height / 2
-    );
+    if (gameFinished) {
+
+      // Final victory screen.
+      ctx.fillStyle = "#FFD700";
+      ctx.font = "bold 48px Arial";
+
+      ctx.fillText(
+        "YOU WIN!",
+        canvas.width / 2,
+        canvas.height / 2
+      );
+
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+
+      ctx.fillText(
+        "You've completed every level!",
+        canvas.width / 2,
+        canvas.height / 2 + 45
+      );
+
+    } else {
+
+      // Normal level completion screen.
+      ctx.fillStyle = "#7df9ff";
+      ctx.font = "bold 40px Arial";
+
+      ctx.fillText(
+        "LEVEL COMPLETE!",
+        canvas.width / 2,
+        canvas.height / 2
+      );
+
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+
+      ctx.fillText(
+        "Get ready for the next level...",
+        canvas.width / 2,
+        canvas.height / 2 + 40
+      );
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-// Skybound level data. This file is loaded by game.js.
+// Skybound level data. This file is loaded by game.js
 window.SKYBOUND_LEVELS = [
   {
     "name": "Level 1",
@@ -405,6 +405,55 @@ window.SKYBOUND_LEVELS = [
         "width": 80,
         "height": 10,
         "color": "pink"
+      },
+      {
+        "x": 988,
+        "y": 364,
+        "width": 150,
+        "height": 10,
+        "color": "green"
+      },
+      {
+        "x": 841,
+        "y": 271,
+        "width": 150,
+        "height": 10,
+        "color": "green"
+      },
+      {
+        "x": 958,
+        "y": 167,
+        "width": 150,
+        "height": 10,
+        "color": "green"
+      },
+      {
+        "x": 756,
+        "y": 91,
+        "width": 150,
+        "height": 10,
+        "color": "green"
+      },
+      {
+        "x": 845,
+        "y": 213,
+        "width": 20,
+        "height": 10,
+        "color": "pink"
+      },
+      {
+        "x": 133,
+        "y": 192,
+        "width": 50,
+        "height": 10,
+        "color": "blue"
+      },
+      {
+        "x": 139,
+        "y": 120,
+        "width": 50,
+        "height": 10,
+        "color": "blue"
       }
     ],
     "fruits": [
@@ -413,9 +462,37 @@ window.SKYBOUND_LEVELS = [
         "y": 377,
         "color": "blue",
         "collected": false
+      },
+      {
+        "x": 785,
+        "y": 185,
+        "color": "green",
+        "collected": false
+      },
+      {
+        "x": 164,
+        "y": 94,
+        "color": "red",
+        "collected": false
       }
     ],
-    "stars": []
+    "stars": [
+      {
+        "x": 682,
+        "y": 145,
+        "collected": false
+      },
+      {
+        "x": 1038,
+        "y": -764,
+        "collected": false
+      },
+      {
+        "x": 162,
+        "y": 155,
+        "collected": false
+      }
+    ]
   },
   {
     "name": "Level 3",
