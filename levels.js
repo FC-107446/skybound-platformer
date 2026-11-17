@@ -74,6 +74,13 @@ window.SKYBOUND_LEVELS = [
         "color": "red"
       },
       {
+        "x": 1150,
+        "y": 155,
+        "width": 180,
+        "height": 10,
+        "color": "green"
+      },
+      {
         "x": 1450,
         "y": 220,
         "width": 140,
@@ -129,48 +136,6 @@ window.SKYBOUND_LEVELS = [
         "height": 10,
         "color": "pink"
       },
-      {
-        "x": 1800,
-        "y": -100,
-        "width": 150,
-        "height": 10,
-        "color": "red"
-      },
-      {
-        "x": 1550,
-        "y": -250,
-        "width": 150,
-        "height": 10,
-        "color": "blue"
-      },
-      {
-        "x": 1300,
-        "y": -400,
-        "width": 150,
-        "height": 10,
-        "color": "green"
-      },
-      {
-        "x": 1050,
-        "y": -550,
-        "width": 150,
-        "height": 10,
-        "color": "red"
-      },
-      {
-        "x": 800,
-        "y": -700,
-        "width": 150,
-        "height": 10,
-        "color": "blue"
-      },
-      {
-        "x": 550,
-        "y": -880,
-        "width": 150,
-        "height": 10,
-        "color": "green"
-      }
     ],
     "fruits": [
       {
