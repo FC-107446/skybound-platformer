@@ -62,215 +62,183 @@ window.SKYBOUND_LEVELS = [
     ]
   },
 
-  // ==========================================
-  // LEVEL 2 - THE SHATTERED SKY
-  // ==========================================
+    {
+    "name": "Level 2",
+    "platforms": [
+      // RED - Starting section
+      {"x":25,"y":331,"width":145,"height":10,"color":"red"},
+      {"x":198,"y":270,"width":78,"height":10,"color":"red"},
+      {"x":315,"y":315,"width":62,"height":10,"color":"red"},
+      {"x":395,"y":215,"width":108,"height":10,"color":"red"},
+      {"x":545,"y":170,"width":70,"height":10,"color":"red"},
+      {"x":650,"y":230,"width":92,"height":10,"color":"red"},
+      {"x":785,"y":140,"width":105,"height":10,"color":"red"},
 
-  {
-    name: "Level 2",
+      // RED - Alternative upper route
+      {"x":258,"y":175,"width":70,"height":10,"color":"red"},
+      {"x":388,"y":112,"width":85,"height":10,"color":"red"},
+      {"x":535,"y":65,"width":70,"height":10,"color":"red"},
+      {"x":695,"y":98,"width":62,"height":10,"color":"red"},
 
-    platforms: makePlatforms([
-      // Main upper route
-      [27,331,150,"red"],
-      [165,266,105,"blue"],
-      [300,205,95,"pink"],
-      [430,146,110,"green"],
-      [575,88,95,"blue"],
-      [705,30,110,"red"],
-      [855,-30,100,"green"],
-      [995,28,100,"pink"],
-      [1135,88,110,"blue"],
-      [1285,27,100,"red"],
-      [1425,-35,110,"green"],
-      [1575,25,95,"blue"],
-      [1710,88,110,"pink"],
-      [1860,25,110,"red"],
-      [2010,-40,100,"green"],
-      [2150,20,120,"blue"],
-      [2315,-48,135,"red"],
+      // BLUE - First colour switch
+      {"x":860,"y":20,"width":100,"height":10,"color":"blue"},
+      {"x":1000,"y":-65,"width":75,"height":10,"color":"blue"},
+      {"x":1115,"y":-5,"width":65,"height":10,"color":"blue"},
+      {"x":1220,"y":-115,"width":110,"height":10,"color":"blue"},
+      {"x":1375,"y":-175,"width":70,"height":10,"color":"blue"},
+      {"x":1480,"y":-90,"width":110,"height":10,"color":"blue"},
+      {"x":1635,"y":-195,"width":75,"height":10,"color":"blue"},
+      {"x":1755,"y":-255,"width":100,"height":10,"color":"blue"},
 
-      // Middle alternative route
-      [92,245,82,"pink"],
-      [220,184,82,"green"],
-      [345,123,82,"blue"],
-      [470,63,82,"pink"],
-      [595,4,82,"green"],
-      [720,-57,82,"blue"],
-      [850,-118,82,"red"],
-      [985,-58,82,"green"],
-      [1115,3,82,"pink"],
-      [1245,-58,82,"blue"],
-      [1375,-120,82,"red"],
-      [1505,-58,82,"green"],
-      [1635,3,82,"blue"],
-      [1765,-58,82,"pink"],
-      [1895,-120,82,"red"],
-      [2025,-58,82,"green"],
-      [2155,-120,82,"blue"],
-      [2285,-180,100,"pink"],
+      // GREEN - Second colour switch
+      {"x":1920,"y":-325,"width":105,"height":10,"color":"green"},
+      {"x":2075,"y":-250,"width":70,"height":10,"color":"green"},
+      {"x":2185,"y":-345,"width":110,"height":10,"color":"green"},
+      {"x":2340,"y":-280,"width":65,"height":10,"color":"green"},
+      {"x":2440,"y":-390,"width":115,"height":10,"color":"green"},
+      {"x":2595,"y":-450,"width":70,"height":10,"color":"green"},
+      {"x":2270,"y":-455,"width":70,"height":10,"color":"green"},
 
-      // Lower recovery route
-      [265,350,95,"blue"],
-      [405,302,90,"green"],
-      [545,350,95,"pink"],
-      [685,300,90,"red"],
-      [825,350,100,"blue"],
-      [975,302,90,"green"],
-      [1120,350,100,"pink"],
-      [1270,300,90,"red"],
-      [1410,350,100,"blue"],
-      [1560,300,90,"green"],
-      [1700,350,100,"pink"],
-      [1850,300,90,"red"],
-      [1990,350,100,"blue"],
-      [2140,300,90,"green"],
-      [2280,350,120,"pink"]
-    ]),
+      // PINK - Third colour switch
+      {"x":2755,"y":-515,"width":115,"height":10,"color":"pink"},
+      {"x":2915,"y":-435,"width":75,"height":10,"color":"pink"},
+      {"x":3035,"y":-540,"width":100,"height":10,"color":"pink"},
+      {"x":3185,"y":-470,"width":65,"height":10,"color":"pink"},
+      {"x":3290,"y":-580,"width":110,"height":10,"color":"pink"},
+      {"x":3445,"y":-645,"width":75,"height":10,"color":"pink"},
 
-    fruits: makeFruits([
-      [95,205,"red"],
-      [365,105,"green"],
-      [620,50,"blue"],
-      [900,-70,"red"],
-      [1165,48,"green"],
-      [1455,-75,"blue"],
-      [1745,48,"red"],
-      [2045,-75,"green"],
-      [2345,-85,"blue"],
-      [1015,265,"red"],
-      [1585,263,"green"]
-    ]),
+      // RED - Final section
+      {"x":3605,"y":-710,"width":130,"height":10,"color":"red"},
+      {"x":3785,"y":-645,"width":85,"height":10,"color":"red"},
+      {"x":3910,"y":-745,"width":115,"height":10,"color":"red"}
+    ],
 
-    stars: makeStars([
-      [250,145],
-      [505,25],
-      [745,-95],
-      [1015,-105],
-      [1270,-105],
-      [1535,-105],
-      [1795,-105],
-      [2055,-105],
-      [2320,-225],
-      [1885,260]
-    ])
+    "fruits": [
+      {"x":95,"y":300,"color":"red","collected":false},
+      {"x":790,"y":55,"color":"blue","collected":false},
+      {"x":1845,"y":-300,"color":"green","collected":false},
+      {"x":2680,"y":-490,"color":"pink","collected":false},
+      {"x":3525,"y":-685,"color":"red","collected":false}
+    ],
+
+    "stars": [
+      {"x":215,"y":238,"collected":false},
+      {"x":410,"y":80,"collected":false},
+      {"x":575,"y":25,"collected":false},
+      {"x":1020,"y":-45,"collected":false},
+      {"x":1450,"y":-135,"collected":false},
+      {"x":1710,"y":-290,"collected":false},
+      {"x":2140,"y":-295,"collected":false},
+      {"x":2475,"y":-425,"collected":false},
+      {"x":2820,"y":-560,"collected":false},
+      {"x":3235,"y":-615,"collected":false},
+      {"x":3830,"y":-700,"collected":false}
+    ]
   },
 
-  // ==========================================
-  // LEVEL 3 - THE SKY SPIRE
-  // ==========================================
-
   {
-    name: "Level 3",
+    "name": "Level 3",
+    "platforms": [
 
-    platforms: makePlatforms([
+      // RED - Starting area
+      {"x":25,"y":331,"width":145,"height":10,"color":"red"},
+      {"x":195,"y":280,"width":75,"height":10,"color":"red"},
+      {"x":320,"y":315,"width":65,"height":10,"color":"red"},
+      {"x":395,"y":215,"width":110,"height":10,"color":"red"},
+      {"x":545,"y":170,"width":70,"height":10,"color":"red"},
+      {"x":655,"y":230,"width":95,"height":10,"color":"red"},
+      {"x":790,"y":135,"width":90,"height":10,"color":"red"},
+      {"x":915,"y":80,"width":105,"height":10,"color":"red"},
 
-      // Main climbing route
-      [25,331,155,"red"],
-      [175,265,85,"pink"],
-      [300,202,80,"blue"],
-      [420,139,85,"green"],
-      [545,76,78,"blue"],
-      [665,13,90,"red"],
-      [795,-50,78,"pink"],
-      [915,-113,85,"green"],
-      [1040,-176,78,"blue"],
-      [1165,-113,85,"red"],
-      [1290,-176,78,"pink"],
-      [1415,-239,85,"green"],
-      [1540,-302,78,"blue"],
-      [1665,-365,90,"red"],
-      [1800,-302,78,"pink"],
-      [1925,-365,85,"green"],
-      [2050,-428,78,"blue"],
-      [2175,-491,95,"red"],
-      [2315,-428,78,"pink"],
-      [2440,-491,85,"green"],
-      [2565,-554,78,"blue"],
-      [2690,-617,95,"red"],
-      [2830,-554,80,"pink"],
-      [2960,-617,130,"green"],
+      // RED - Upper alternative route
+      {"x":255,"y":180,"width":75,"height":10,"color":"red"},
+      {"x":375,"y":110,"width":65,"height":10,"color":"red"},
+      {"x":510,"y":52,"width":80,"height":10,"color":"red"},
+      {"x":665,"y":85,"width":70,"height":10,"color":"red"},
 
-      // Narrow upper challenge route
-      [105,205,70,"blue"],
-      [225,143,70,"red"],
-      [345,80,70,"pink"],
-      [465,18,70,"green"],
-      [585,-45,70,"blue"],
-      [705,-108,70,"red"],
-      [825,-170,70,"pink"],
-      [945,-232,70,"green"],
-      [1065,-170,70,"blue"],
-      [1185,-108,70,"red"],
-      [1305,-170,70,"pink"],
-      [1425,-232,70,"green"],
-      [1545,-295,70,"blue"],
-      [1665,-358,70,"red"],
-      [1785,-420,70,"pink"],
-      [1905,-358,70,"green"],
-      [2025,-420,70,"blue"],
-      [2145,-483,70,"red"],
-      [2265,-545,70,"pink"],
-      [2385,-483,70,"green"],
-      [2505,-545,70,"blue"],
-      [2625,-608,70,"red"],
-      [2745,-670,70,"pink"],
-      [2865,-608,70,"green"],
+      // PINK - First colour change
+      {"x":1090,"y":15,"width":115,"height":10,"color":"pink"},
+      {"x":1220,"y":-65,"width":75,"height":10,"color":"pink"},
+      {"x":1090,"y":-125,"width":70,"height":10,"color":"pink"},
+      {"x":950,"y":-55,"width":100,"height":10,"color":"pink"},
+      {"x":820,"y":-135,"width":65,"height":10,"color":"pink"},
+      {"x":690,"y":-205,"width":105,"height":10,"color":"pink"},
+      {"x":535,"y":-250,"width":75,"height":10,"color":"pink"},
+      {"x":400,"y":-180,"width":90,"height":10,"color":"pink"},
+      {"x":260,"y":-245,"width":75,"height":10,"color":"pink"},
 
-      // Lower alternative route
-      [260,330,85,"green"],
-      [390,278,85,"blue"],
-      [520,330,85,"pink"],
-      [650,278,85,"green"],
-      [780,330,85,"blue"],
-      [910,278,85,"pink"],
-      [1040,330,85,"red"],
-      [1170,278,85,"green"],
-      [1300,330,85,"blue"],
-      [1430,278,85,"pink"],
-      [1560,330,85,"red"],
-      [1690,278,85,"green"],
-      [1820,330,85,"blue"],
-      [1950,278,85,"pink"],
-      [2080,330,85,"red"],
-      [2210,278,85,"green"],
-      [2340,330,85,"blue"],
-      [2470,278,85,"pink"],
-      [2600,330,85,"red"],
-      [2730,278,85,"green"],
-      [2860,330,100,"blue"]
+      // PINK - Difficult side platforms
+      {"x":875,"y":-225,"width":65,"height":10,"color":"pink"},
+      {"x":740,"y":-280,"width":65,"height":10,"color":"pink"},
 
-    ]),
+      // BLUE - Second colour change
+      {"x":80,"y":-315,"width":105,"height":10,"color":"blue"},
+      {"x":225,"y":-390,"width":70,"height":10,"color":"blue"},
+      {"x":350,"y":-455,"width":110,"height":10,"color":"blue"},
+      {"x":505,"y":-395,"width":65,"height":10,"color":"blue"},
+      {"x":615,"y":-505,"width":105,"height":10,"color":"blue"},
+      {"x":765,"y":-565,"width":75,"height":10,"color":"blue"},
+      {"x":895,"y":-485,"width":110,"height":10,"color":"blue"},
+      {"x":430,"y":-540,"width":60,"height":10,"color":"blue"},
 
-    fruits: makeFruits([
-      [115,165,"red"],
-      [445,99,"green"],
-      [695,-27,"blue"],
-      [965,-153,"red"],
-      [1205,-153,"green"],
-      [1455,-279,"blue"],
-      [1695,-405,"red"],
-      [1945,-405,"green"],
-      [2205,-531,"blue"],
-      [2475,-531,"red"],
-      [2720,-657,"green"],
-      [2995,-657,"blue"]
-    ]),
+      // GREEN - Third colour change
+      {"x":1075,"y":-555,"width":115,"height":10,"color":"green"},
+      {"x":1225,"y":-635,"width":70,"height":10,"color":"green"},
+      {"x":1110,"y":-700,"width":110,"height":10,"color":"green"},
+      {"x":965,"y":-640,"width":65,"height":10,"color":"green"},
+      {"x":845,"y":-750,"width":110,"height":10,"color":"green"},
+      {"x":695,"y":-815,"width":75,"height":10,"color":"green"},
+      {"x":550,"y":-735,"width":100,"height":10,"color":"green"},
 
-    stars: makeStars([
-      [245,100],
-      [485,-25],
-      [725,-170],
-      [965,-292],
-      [1090,-230],
-      [1330,-292],
-      [1575,-355],
-      [1815,-450],
-      [2055,-480],
-      [2295,-575],
-      [2535,-605],
-      [2780,-700],
-      [2910,-640]
-    ])
+      // RED - Fourth colour change
+      {"x":350,"y":-810,"width":110,"height":10,"color":"red"},
+      {"x":500,"y":-900,"width":70,"height":10,"color":"red"},
+      {"x":640,"y":-965,"width":110,"height":10,"color":"red"},
+      {"x":795,"y":-905,"width":65,"height":10,"color":"red"},
+      {"x":905,"y":-1015,"width":105,"height":10,"color":"red"},
+      {"x":1060,"y":-1080,"width":75,"height":10,"color":"red"},
+
+      // BLUE - Fifth colour change
+      {"x":1230,"y":-1150,"width":110,"height":10,"color":"blue"},
+      {"x":1390,"y":-1070,"width":75,"height":10,"color":"blue"},
+      {"x":1510,"y":-1175,"width":110,"height":10,"color":"blue"},
+      {"x":1665,"y":-1235,"width":65,"height":10,"color":"blue"},
+      {"x":1770,"y":-1145,"width":100,"height":10,"color":"blue"},
+
+      // PINK - Final colour change
+      {"x":1940,"y":-1210,"width":125,"height":10,"color":"pink"},
+      {"x":2110,"y":-1130,"width":80,"height":10,"color":"pink"},
+      {"x":2235,"y":-1235,"width":110,"height":10,"color":"pink"},
+      {"x":2390,"y":-1170,"width":140,"height":10,"color":"pink"}
+    ],
+
+    "fruits": [
+      {"x":95,"y":300,"color":"red","collected":false},
+      {"x":1035,"y":45,"color":"pink","collected":false},
+      {"x":170,"y":-290,"color":"blue","collected":false},
+      {"x":995,"y":-530,"color":"green","collected":false},
+      {"x":450,"y":-780,"color":"red","collected":false},
+      {"x":1150,"y":-1120,"color":"blue","collected":false},
+      {"x":1860,"y":-1185,"color":"pink","collected":false}
+    ],
+
+    "stars": [
+      {"x":230,"y":235,"collected":false},
+      {"x":405,"y":70,"collected":false},
+      {"x":700,"y":45,"collected":false},
+      {"x":950,"y":-85,"collected":false},
+      {"x":670,"y":-255,"collected":false},
+      {"x":120,"y":-275,"collected":false},
+      {"x":520,"y":-425,"collected":false},
+      {"x":850,"y":-520,"collected":false},
+      {"x":1100,"y":-520,"collected":false},
+      {"x":970,"y":-675,"collected":false},
+      {"x":570,"y":-785,"collected":false},
+      {"x":430,"y":-850,"collected":false},
+      {"x":930,"y":-970,"collected":false},
+      {"x":1280,"y":-1110,"collected":false},
+      {"x":1645,"y":-1275,"collected":false},
+      {"x":2010,"y":-1170,"collected":false},
+      {"x":2290,"y":-1200,"collected":false}
+    ]
   }
-
-];
