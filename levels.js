@@ -179,6 +179,12 @@ window.SKYBOUND_LEVELS = [
         "y": 100,
         "color": "green",
         "collected": false
+      },
+      {
+        "x": 1350,
+        "y": 80,
+        "color": "red",
+        "collected": false
       }
     ],
     "stars": [
